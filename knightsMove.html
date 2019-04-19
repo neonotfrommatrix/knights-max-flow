@@ -1,0 +1,28 @@
+<!doctype html><html><head>
+    <title>Knights Move</title>
+    <link rel="stylesheet" href="../assets/styles.css">
+    </head>
+    <body><h1>Whos the fastest</h1>
+        <canvas id="Knightsgrid" width="400" height="400"></canvas>
+    </body>
+    <script src="./assets/move.js"></script>
+    <script>
+        function draw_title( context, title, x, y ){
+            context.save( );
+            context.fillStyle = 'darkgrey';
+            context.font = "30px Arial";
+            context.fillText( title, x, y );
+            context.restore( );
+        }
+
+        var insertcanvas = document.getElementById( "Knightsgrid" );
+        var insertcontext = insertcanvas.getContext( "2d" );
+        draw_title(insertcontext, "Knights Move", 100 , 30);
+        draw_grid( insertcontext, 10, 50, 'blue', 'black' );
+
+        draw_line(insertcontext, 60, 60);
+        
+    </script>
+</html>
+
+
