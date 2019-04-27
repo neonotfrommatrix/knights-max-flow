@@ -2,8 +2,8 @@
     <title>Knights Move</title>
     <link rel="stylesheet" href="../assets/styles.css">
     </head>
-    <body><h1>Whos the fastest</h1>
-        <canvas id="Knightsgrid" width="400" height="400"></canvas>
+    <body><h1>Sink the Knight</h1>
+        <canvas id="Knightsgrid" width="850" height="850"></canvas>
     </body>
     <script src="./assets/move.js"></script>
     <script>
@@ -17,11 +17,14 @@
 
         var insertcanvas = document.getElementById( "Knightsgrid" );
         var insertcontext = insertcanvas.getContext( "2d" );
-        draw_title(insertcontext, "Knights Move", 100 , 30);
-        draw_grid( insertcontext, 10, 50, 'blue', 'black' );
+        draw_title(insertcontext, "Knights Move", 350 , 390);
+        draw_grid( insertcontext, grid_x_space, grid_y_space, 'blue', 'black' );
+        assign_value_to_grid(insertcontext, nodelist);
 
-        draw_line(insertcontext, 60, 60);
+        //draw the path of the knight
         
+        //draw_line(insertcontext, 60, 60);
+        knightsMove(moves);
     </script>
 </html>
 
