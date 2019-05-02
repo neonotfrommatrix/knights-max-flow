@@ -1,3 +1,4 @@
+/* Old way
 let knightsBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -12,22 +13,7 @@ let knightsBoard = [
 var moveList = [[1,2],[-1,2],[1,-2],[-1,-2],[2,1],[-2,1],[2,-1],[-2,-1]];
 var moves = [];
 
-//creates the grid sizes 
-var grid_x_space = 85; 
-var grid_y_space = 85; 
-var grid_x = 10; 
-var grid_y = 10; 
-//console.log(grid_x_space, grid_y_space, grid_x, grid_y);
 
-//creats a list of nodes which store the random value with their x and y position in the grid
-var nodelist = [];
-for(var x = 0; x < 800; x += grid_x_space){
-    for(var y = 0; y < 800; y += grid_y_space){
-        // flow_val ensure the flow_value number is generated to equal or less
-        var flow_val = 2 * Math.floor((Math.random() * 15) + 1);
-        nodelist.push({x_pos : x, y_pos : y, max_value: flow_val, flow_value : Math.floor((Math.random() * flow_val) + 1)});
-    }
-}
 
 //creates random start and stop positions for the knight
 var start_pos = [{x_pos: Math.floor((Math.random() * grid_x)), y_pos: Math.floor((Math.random() * grid_y))}];
@@ -66,6 +52,7 @@ function knightsMove(moves){
     }
     console.log(moves);
 }
+*/
 // ========== PYTHON SCRIPT TRANSLATION ================================
 
 let knightsBoard = [
@@ -98,19 +85,42 @@ CONST E_FLOW = 2;
 CONST X_CORD = 0;
 CONST Y_CORD = 1;
 
-for(var col = 0; col < 10; col++)
-{
-    for(var row = 0; row < 10; row++)
-    {
-        knightsBoard[row][col] = 2 * Math.floor(Math.random() * 15.99);
+//creates the grid sizes 
+var grid_x_space = 85; 
+var grid_y_space = 85; 
+var grid_x = 10; 
+var grid_y = 10; 
+//console.log(grid_x_space, grid_y_space, grid_x, grid_y);
+
+//creats a list of nodes which store the random value with their x and y position in the grid
+var nodelist = [];
+/*  Old way of doing it
+for(var x = 0; x < 800; x += grid_x_space){
+    for(var y = 0; y < 800; y += grid_y_space){
+        // flow_val ensure the flow_value number is generated to equal or less
+        var flow_val = 2 * Math.floor((Math.random() * 15) + 1);
+        nodelist.push({x_pos : x, y_pos : y, max_value: flow_val, flow_value : Math.floor((Math.random() * flow_val) + 1)});
     }
 }
-
+*/
+for(var x = 0; x < grid_x; x++){
+    for(var y = 0; y < grid_y; y++){
+        // flow_val ensure the flow_value number is generated to equal or less
+        var flow_val = 2 * Math.floor(Math.random() * 15.99);
+        knightsBoard[x][y] = flow_val;
+        nodelist.push(
+            {x_pos : (x*grid_x_space), 
+             y_pos : (y*grid_y_space), 
+             max_value: flow_val, 
+             flow_value : 0
+            });
+    }
+}
 var total_edge_pile = Math.floor(Math.random() * 15.99) + 15;
 var edge_pile = total_edge_pile - 6;
 
 var start_path = [
-    //origin vertex, destination vertex, edge flow
+    //origin vertex, destination vertex,                    edge flow
     [       [1,2],          [2,4],          ((knightsBoard[1][2] + knightsBoard[2][4]) / 2)   ],
     [       [2,4],          [4,3],          ((knightsBoard[2][4] + knightsBoard[4][3]) / 2)   ],
     [       [4,3],          [5,5],          ((knightsBoard[4][3] + knightsBoard[5][5]) / 2)   ],
