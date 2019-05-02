@@ -119,6 +119,8 @@ for(var x = 0; x < grid_x; x++){
 var total_edge_pile = Math.floor(Math.random() * 15.99) + 15;
 var edge_pile = total_edge_pile - 6;
 
+
+// Lines of code 124-132 is the Data Structure of the graph!
 var start_path = [
     //origin vertex, destination vertex,                    edge flow
     [       [1,2],          [2,4],          ((knightsBoard[1][2] + knightsBoard[2][4]) / 2)   ],
