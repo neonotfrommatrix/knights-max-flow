@@ -78,10 +78,11 @@ const DIRECTIONS = [
     [ 2,-1], // RIGHT_UP
     [ 2, 1]  // RIGHT_DOWN
 ];
-// enum variables
+// enum variables used to index arrays
 CONST OG_VER = 0;
 CONST DT_VER = 1;
-CONST E_FLOW = 2;
+CONST MAX_FLOW = 2;
+CONST CURR_FLOW = 3;
 CONST X_CORD = 0;
 CONST Y_CORD = 1;
 
@@ -122,13 +123,13 @@ var edge_pile = total_edge_pile - 6;
 
 // Lines of code 124-132 is the Data Structure of the graph!
 var start_path = [
-    //origin vertex, destination vertex,                    edge flow
-    [       [1,2],          [2,4],          ((knightsBoard[1][2] + knightsBoard[2][4]) / 2)   ],
-    [       [2,4],          [4,3],          ((knightsBoard[2][4] + knightsBoard[4][3]) / 2)   ],
-    [       [4,3],          [5,5],          ((knightsBoard[4][3] + knightsBoard[5][5]) / 2)   ],
-    [       [5,5],          [4,7],          ((knightsBoard[5][5] + knightsBoard[4][7]) / 2)   ],
-    [       [4,7],          [6,8],          ((knightsBoard[4][7] + knightsBoard[6][8]) / 2)   ],
-    [       [6,8],          [8,7],          ((knightsBoard[6][8] + knightsBoard[8][7]) / 2)   ],
+    //origin vertex, destination vertex,                    max flow,                      current flow
+    [       [1,2],          [2,4],          ((knightsBoard[1][2] + knightsBoard[2][4]) / 2),    0   ],
+    [       [2,4],          [4,3],          ((knightsBoard[2][4] + knightsBoard[4][3]) / 2),    0   ],
+    [       [4,3],          [5,5],          ((knightsBoard[4][3] + knightsBoard[5][5]) / 2),    0   ],
+    [       [5,5],          [4,7],          ((knightsBoard[5][5] + knightsBoard[4][7]) / 2),    0   ],
+    [       [4,7],          [6,8],          ((knightsBoard[4][7] + knightsBoard[6][8]) / 2),    0   ],
+    [       [6,8],          [8,7],          ((knightsBoard[6][8] + knightsBoard[8][7]) / 2),    0   ],
 ];
 var vertices = [ [1,2], [2,4], [4,3], [5,5], [4,7], [6,8], [8,7] ];
 var edges = start_path;
@@ -229,8 +230,8 @@ while(edge_pile > 1)
     }
     if(current_highest > 0)
     {
-        var left_edge =  [   [start[X_COORD],start[Y_COORD]],    [highest_target[X_COORD],highest_target[Y_COORD]],  first_edge_flow ];
-        var right_edge = [   [highest_target[X_COORD],highest_target[Y_COORD]], [highest_return[X_COORD],highest_return[Y_COORD]], second_edge_flow ];
+        var left_edge =  [   [start[X_COORD],start[Y_COORD]],    [highest_target[X_COORD],highest_target[Y_COORD]],  first_edge_flow, 0 ];
+        var right_edge = [   [highest_target[X_COORD],highest_target[Y_COORD]], [highest_return[X_COORD],highest_return[Y_COORD]], second_edge_flow, 0 ];
         edges.push(left_edge);
         edges.push(right_edge);
     }
