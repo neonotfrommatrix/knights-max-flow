@@ -66,7 +66,166 @@ function knightsMove(moves){
     }
     console.log(moves);
 }
+// ========== PYTHON SCRIPT TRANSLATION ================================
 
+let knightsBoard = [
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+  ];
+
+const DIRECTIONS = [
+    [-1,-2], // UP_LEFT
+    [ 1,-2], // UP_RIGHT
+    [-2,-1], // LEFT_UP
+    [-2, 1], // LEFT_DOWN
+    [-1, 2], // DOWN_LEFT
+    [ 1, 2], // DOWN_RIGHT
+    [ 2,-1], // RIGHT_UP
+    [ 2, 1]  // RIGHT_DOWN
+];
+// enum variables
+CONST OG_VER = 0;
+CONST DT_VER = 1;
+CONST E_FLOW = 2;
+CONST X_CORD = 0;
+CONST Y_CORD = 1;
+
+for(var col = 0; col < 10; col++)
+{
+    for(var row = 0; row < 10; row++)
+    {
+        knightsBoard[row][col] = 2 * Math.floor(Math.random() * 15.99);
+    }
+}
+
+var total_edge_pile = Math.floor(Math.random() * 15.99) + 15;
+var edge_pile = total_edge_pile - 6;
+
+var start_path = [
+    //origin vertex, destination vertex, edge flow
+    [       [1,2],          [2,4],          ((knightsBoard[1][2] + knightsBoard[2][4]) / 2)   ],
+    [       [2,4],          [4,3],          ((knightsBoard[2][4] + knightsBoard[4][3]) / 2)   ],
+    [       [4,3],          [5,5],          ((knightsBoard[4][3] + knightsBoard[5][5]) / 2)   ],
+    [       [5,5],          [4,7],          ((knightsBoard[5][5] + knightsBoard[4][7]) / 2)   ],
+    [       [4,7],          [6,8],          ((knightsBoard[4][7] + knightsBoard[6][8]) / 2)   ],
+    [       [6,8],          [8,7],          ((knightsBoard[6][8] + knightsBoard[8][7]) / 2)   ],
+];
+var vertices = [ [1,2], [2,4], [4,3], [5,5], [4,7], [6,8], [8,7] ];
+var edges = start_path;
+
+while(edge_pile > 1)
+{
+    var current_highest = 0;
+    var start = [-1,-1];
+    var highest_target = [-1,-1];
+    var highest_return = [-1,-1];
+    var first_edge_flow = 0;
+    var second_edge_flow = 0;
+    
+    var edge_count = edges.length;
+    for(var edge = 0; edge < edge_count; edge++)
+    {
+        var this_x = edges[edge][OG_VER][X_CORD];
+        var this_y = edges[edge][OG_VER][Y_CORD];
+        
+        var targets = [];
+        
+        //From the current vertex, check all 8 directions to find target vertices
+        for(var direction = 0; direction < DIRECTIONS.length; direction++)
+        {
+            var target_vertex_x = this_x + DIRECTIONS[direction][X_COORD];
+            var target_vertex_y = this_y + DIRECTIONS[direction][Y_COORD];
+            
+            //check the bounds
+            if(target_vertex_x > 9 || target_vertex_y > 9 || target_vertex_x < 0 || target_vertex_y < 0)
+                continue;
+            
+            //check if target_vertex is already in the vertices list
+            var found = false;
+            for(var vertix = 0; vertix < vertices.length; vertix++)
+            {
+                if(target_vertex_x == vertices[vertix][X_COORD] && target_vertex_y == vertices[vertix][Y_COORD])
+                {
+                    found = true;
+                    break;
+                }
+            }
+            if(found == false)
+            {
+                targets.push([target_vertex_x, target_vertex_y]);   
+            }
+        }
+        //Once all targets have been found, iterate through them to find candidate edge pairs
+        for(var target = 0; target < targets.length; target++)
+        {
+            var target_x = targets[target][X_COORD];
+            var target_y = targets[target][Y_COORD];
+            
+            //Once again, we iterate through all 8 directions to find return vertex candidates
+            for(var direction = 0; direction < DIRECTIONS.length; direction++)
+            {
+                var return_vertex_x = target_x + DIRECTIONS[direction][X_COORD];
+                var return_vertex_y = target_y + DIRECTIONS[direction][Y_COORD];
+                
+                //check the bounds
+                if(return_vertex_x > 9 || return_vertex_y > 9 || return_vertex_x < 0 || return_vertex_y < 0)
+                    continue;
+                
+                //Prevent a closed loop by not allowing the return vertex to equal the source vertex
+                if(return_vertex_x == this_x && return_vertex_y == this_y)
+                    continue;
+                
+                //The return vertex must be in the list of vertices, so continue if not
+                var found = false;
+                for(var vertix = 0; vertix < vertices.length; vertix++)
+                {
+                    if(target_x == vertices[vertix][X_COORD] && target_y == vertices[vertix][Y_COORD])
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if(found == true)
+                {
+                    var target_flow = ((knightsBoard[this_x][this_y] + knightsBoard[target_x][target_y]) / 2);
+                    var return_flow = ((knightsBoard[target_x][target_y] + knightsBoard[return_vertex_x][return_vertex_y]) / 2);
+                    var max_flow = Math.min(target_flow, return_flow);
+                    
+                    if(max_flow > current_highest)
+                    {
+                        current_highest = max_flow;
+                        highest_target[X_COORD] = target_x;
+                        highest_target[Y_COORD] = target_y;
+                        highest_return[X_COORD] = return_vertex_x;
+                        highest_return[Y_COORD] = return_vertex_y;
+                        start[X_COORD] = this_x;
+                        start[Y_COORD] = this_y;
+                        first_edge_flow = target_flow;
+                        second_edge_flow = return_flow;
+                    }
+                }
+            }
+        }
+    }
+    if(current_highest > 0)
+    {
+        var left_edge =  [   [start[X_COORD],start[Y_COORD]],    [highest_target[X_COORD],highest_target[Y_COORD]],  first_edge_flow ];
+        var right_edge = [   [highest_target[X_COORD],highest_target[Y_COORD]], [highest_return[X_COORD],highest_return[Y_COORD]], second_edge_flow ];
+        edges.push(left_edge);
+        edges.push(right_edge);
+    }
+    
+    edge_pile -= 2;
+}
+                                                
 // =====================================================  draw_grid ====
 function draw_grid( rctx, rminor, rmajor, rstroke, rfill  )
 {
