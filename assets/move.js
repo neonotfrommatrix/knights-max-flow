@@ -234,11 +234,122 @@ while(edge_pile > 1)
         var right_edge = [   [highest_target[X_COORD],highest_target[Y_COORD]], [highest_return[X_COORD],highest_return[Y_COORD]], second_edge_flow, 0 ];
         edges.push(left_edge);
         edges.push(right_edge);
+        vertices.push([highest_target[X_COORD],highest_target[Y_COORD]]);
     }
     
     edge_pile -= 2;
 }
-                                                
+// ================ Breadth First Search ===============================
+
+//parents will be a list of vertex indexes that hold the coordinates of the parent node
+var parents = new Array(vertices.length);
+function BFS(sourceVertex, sinkVertex)
+{
+    //queue consists of ints that represent the vertex index of the vertices array
+    var queue = [];
+    //visited consists of a boolean array that keeps track if the vertex index has been visited
+    var visited = new Array(vertices.length);
+    //initialize all visited to false and reset the parents array
+    for(var i = 0; i < vertices.length; i++)
+    {
+        visited[i] = false;
+        parents[i] = -1;
+    }
+    
+    //Add first element to queue
+    queue.push(sourceVertex);
+    visited[sourceVertex] = true;
+    
+    //BFS Loop
+    while(queue.length > 0)
+    {
+        var front = queue[0];
+        queue.shift();
+        
+        for(var vertex = 0; vertex < vertices.length; vertex++)
+        {
+           //Only consider vertices that have not been visited
+           if(visited[vertex] == true)
+               continue;
+           var this_vertex = vertices[vertex];
+           //Find all edges that have this_vertex as its origin vertex
+            for(var edge = 0; edge < edges.length; edge++)
+            {
+                //This if checks if a path exists from the front element of the queue to the current vertex in question
+                if(edges[edge][OG_VER][X_COORD] == front[X_COORD] &&
+                   edges[edge][OG_VER][Y_COORD] == front[Y_COORD] &&
+                   edges[edge][DT_VERT][X_COORD] == this_vertex[X_COORD] &&
+                   edges[edge][DT_VERT][Y_COORD] == this_vertex[Y_COORD] &&
+                   edges[edge][MAX_FLOW] - edges[edge][CURR_FLOW] > 0)
+                {
+                    queue.push(vertex);
+                    parents[vertex] = front;
+                    visited[vertex] = true;
+                }
+            }
+        }
+    }
+    return (visited[sinkVertex] == true);
+}
+
+// ==================== FORD_FULKERSON Algorithm ==========================
+function Ford_Fulkerson(sourceVertex, sinkVertex)
+{
+       var u; //Origin vertex
+       var v; //Destination vertex
+       var max_flow = 0;
+    
+      //Increasing the flow while a path exists from source to sink
+       while(BFS(sourceVertex, sinkVertex))
+       {
+           //settting flow of the path to arbitrarily high number
+           var path_flow = 9999;
+           //this loop traverses the path backwards
+           for(v = sinkVertex; v != sourceVertex; v = parents[v])
+           {
+               //Origin of the edge in question
+               u = parents[v];
+               //find the edge that corresponds to the current edge
+               for(var edge = 0; edge < edges.length; edge++)
+               {
+                    if(edges[edge][OG_VER][X_COORD] == vertices[u][X_COORD] &&
+                       edges[edge][OG_VER][Y_COORD] == vertices[u][Y_COORD] &&
+                       edges[edge][DT_VER][X_COORD] == vertices[v][X_COORD] &&
+                       edges[edge][DT_VER][Y_COORD] == vertices[v][X_COORD])
+                    {
+                        //Keep track of the lowest possible flow through the path
+                        path_flow = Math.min(path_flow, edges[edge][MAX_FLOW] - edges[edge][CURR_FLOW];
+                        break;
+                    }
+               }
+           }
+           //Once more, iterate through the path and increase the flow of each edge
+           for(v = sinkVertex; v != sourceVertex; v = parents[v])
+           {
+               u = parents[v];
+               //We find the edge that corresponds to the origin/destination pair
+               for(var edge = 0; edge < edges.length; edge++)
+               {
+                    if(edges[edge][OG_VER][X_COORD] == vertices[u][X_COORD] &&
+                       edges[edge][OG_VER][Y_COORD] == vertices[u][Y_COORD] &&
+                       edges[edge][DT_VER][X_COORD] == vertices[v][X_COORD] &&
+                       edges[edge][DT_VER][Y_COORD] == vertices[v][X_COORD])
+                    {
+                        //Once we've found it, we increase its flow
+                        edges[edge][CURR_FLOW] += path_flow;
+                        // Since there will only be exactly 1, we do not need to continue searching
+                        break;
+                    }
+               }                 
+           }
+           max_flow += path_flow;
+       }
+       return max_flow;
+}
+               
+               
+// ======================= THE ONE CALL THAT MAKES THE ENTIRE ALGORITHM WORK =================
+var TOTAL_MAX_FLOW = Ford_Fulkerson(0,6);
 // =====================================================  draw_grid ====
 function draw_grid( rctx, rminor, rmajor, rstroke, rfill  )
 {
