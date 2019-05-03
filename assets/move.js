@@ -54,7 +54,7 @@ function knightsMove(moves){
 }
 */
 // ========== PYTHON SCRIPT TRANSLATION ================================
-
+/*
 let knightsBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -67,7 +67,8 @@ let knightsBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
   ];
-
+*/
+/*
 const DIRECTIONS = [
     [-1,-2], // UP_LEFT
     [ 1,-2], // UP_RIGHT
@@ -79,22 +80,25 @@ const DIRECTIONS = [
     [ 2, 1]  // RIGHT_DOWN
 ];
 // enum variables used to index arrays
-CONST OG_VER = 0;
-CONST DT_VER = 1;
-CONST MAX_FLOW = 2;
-CONST CURR_FLOW = 3;
-CONST X_CORD = 0;
-CONST Y_CORD = 1;
 
+const OG_VER = 0;
+const DT_VER = 1;
+const MAX_FLOW = 2;
+const CURR_FLOW = 3;
+const X_CORD = 0;
+const Y_CORD = 1;
+*/
 //creates the grid sizes 
+/*
 var grid_x_space = 85; 
 var grid_y_space = 85; 
 var grid_x = 10; 
 var grid_y = 10; 
+*/
 //console.log(grid_x_space, grid_y_space, grid_x, grid_y);
 
 //creats a list of nodes which store the random value with their x and y position in the grid
-var nodelist = [];
+//var nodelist = [];
 /*  Old way of doing it
 for(var x = 0; x < 800; x += grid_x_space){
     for(var y = 0; y < 800; y += grid_y_space){
@@ -104,6 +108,7 @@ for(var x = 0; x < 800; x += grid_x_space){
     }
 }
 */
+/*
 for(var x = 0; x < grid_x; x++){
     for(var y = 0; y < grid_y; y++){
         // flow_val ensure the flow_value number is generated to equal or less
@@ -117,9 +122,10 @@ for(var x = 0; x < grid_x; x++){
             });
     }
 }
+*/
+/*
 var total_edge_pile = Math.floor(Math.random() * 15.99) + 15;
 var edge_pile = total_edge_pile - 6;
-
 
 // Lines of code 124-132 is the Data Structure of the graph!
 var start_path = [
@@ -133,7 +139,8 @@ var start_path = [
 ];
 var vertices = [ [1,2], [2,4], [4,3], [5,5], [4,7], [6,8], [8,7] ];
 var edges = start_path;
-
+*/
+/*
 while(edge_pile > 1)
 {
     var current_highest = 0;
@@ -238,8 +245,9 @@ while(edge_pile > 1)
     
     edge_pile -= 2;
 }
-                                                
+*/                                                
 // =====================================================  draw_grid ====
+/*
 function draw_grid( rctx, rminor, rmajor, rstroke, rfill  )
 {
     rctx.save( );
@@ -276,7 +284,6 @@ function assign_value_to_grid(gctx, nodel){
         gctx.fillText(dis_text, nodel[w].x_pos + 20 , nodel[w].y_pos + 43);
     }
 }
-
 
 //====================================================== draw box
 function draw_line( lctx, x_pos, y_pos ) //, stroke, fill )
@@ -318,3 +325,4 @@ function draw_box( ctx ) //, stroke, fill )
         }
     }
 }
+*/
