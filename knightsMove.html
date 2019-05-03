@@ -21,25 +21,23 @@
             rctx.save( );
             rctx.strokeStyle = rstroke;
             rctx.fillStyle = rfill;
-            let width = grid_x_space * grid_x; //rctx.canvas.width - (rctx.canvas.width % grid_x);
-            let height = grid_y_space * grid_y; //rctx.canvas.height - (rctx.canvas.height % grid_y);
+            let width = grid_x_space * grid_x; 
+            let height = grid_y_space * grid_y; 
             for ( var ix = 0; ix <= width; ix += rminor)
             {
                 rctx.beginPath( );
                 rctx.moveTo( ix, 0 );
                 rctx.lineTo( ix, height );
-                rctx.lineWidth = .5; //( ix % rmajor == 0 ) ? 0.5 : 0.25;
+                rctx.lineWidth = .5; 
                 rctx.stroke( );
-                //if ( ix % rminor == 0 ) { rctx.fillText( ix, ix, 10 ); }
             }
             for ( var iy = 0; iy <= height; iy += rmajor )
             {
                 rctx.beginPath( );
                 rctx.moveTo( 0, iy );
                 rctx.lineTo( width, iy );
-                rctx.lineWidth = .5; //( iy % rmajor == 0 ) ? 0.5 : 0.25;
+                rctx.lineWidth = .5; 
                 rctx.stroke( );
-                //if ( iy % rminor == 0 ) {rctx.fillText( iy, 0, iy + 10 );}
             }
             draw_box(rctx);
             rctx.restore( );
