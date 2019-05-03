@@ -1,107 +1,96 @@
-<!doctype html><html><head>
+<!doctype html>
+<html>
+<head>
     <title>Knights Move</title>
-    <link rel="stylesheet" href="../assets/styles.css">
-    </head>
-    <body><h1>Sink the Knight</h1>
-        <canvas id="Knightsgrid" width="850" height="850"></canvas>
-    </body>
-    <script src="./assets/move.js"></script>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <h1>Sink the Knight</h1>
+    <canvas id="Knightsgrid" width="850" height="850"></canvas>
+    <script src="./move.js"></script>
+    <script src="./move2.js"></script>
     <script>
-        
-        function draw_title( context, title, x, y ){
-            context.save( );
-            context.fillStyle = 'darkgrey';
+        function draw_title(context, title, x, y) {
+            context.save();
+            context.fillStyle = 'white';
             context.font = "30px Arial";
-            context.fillText( title, x, y );
-            context.restore( );
+            context.fillText(title, x, y);
+            context.restore();
         }
-
-        function draw_grid( rctx, rminor, rmajor, rstroke, rfill  )
-        {
-            rctx.save( );
-            rctx.strokeStyle = rstroke;
-            rctx.fillStyle = rfill;
-            let width = grid_x_space * grid_x; 
-            let height = grid_y_space * grid_y; 
-            for ( var ix = 0; ix <= width; ix += rminor)
-            {
-                rctx.beginPath( );
-                rctx.moveTo( ix, 0 );
-                rctx.lineTo( ix, height );
-                rctx.lineWidth = .5; 
-                rctx.stroke( );
-            }
-            for ( var iy = 0; iy <= height; iy += rmajor )
-            {
-                rctx.beginPath( );
-                rctx.moveTo( 0, iy );
-                rctx.lineTo( width, iy );
-                rctx.lineWidth = .5; 
-                rctx.stroke( );
-            }
-            draw_box(rctx);
-            rctx.restore( );
-        }
-
-        //draws the values on the grid
-        function assign_value_to_grid(gctx, nodel){
-            for(var w = 0; w < nodel.length; w++){
-                var dis_text = "<" + String(nodel[w].max_value) + " , " + String(nodel[w].flow_value) + ">"; 
-                gctx.fillText(dis_text, nodel[w].x_pos + 20 , nodel[w].y_pos + 43);
-            }
-        }
-
-        //====================================================== draw box
-        function draw_line( lctx, x_pos, y_pos ) //, stroke, fill )
-        {
-            stroke = 'black';
-            fill = 'black';
-            lctx.save();
-            lctx.strokeStyle = stroke;
-            lctx.fillStyle = fill;
-            lctx.lineWidth = 2;
-            lctx.beginPath();
-            lctx.moveTo(0, 0);
-            lctx.lineTo(x_pos, y_pos);
-            lctx.stroke();
-            lctx.fill();
-            lctx.restore( );
-        }
-
-        //====================================================== draw box
-        function draw_box( ctx ) //, stroke, fill )
-        {
-            for(var i = 0;  i < 850; i+=85){
-                var j = 0;
-                if ((i / 85) % 2 == 0){
-                    j = 85;
-                }
-                for( ; j < 850; j+=170){
-                    stroke = 'gray';
-                    fill = 'gray';
-                    ctx.save( );
-                    ctx.strokeStyle = stroke;
-                    ctx.fillStyle = fill;
-                    ctx.lineWidth = 5;
-                    //ctx.rect(194, 54, 3, 3);
-                    ctx.rect(j+3, i+3, 79, 79 )
-                    ctx.stroke();
-                    ctx.fill();
-                    ctx.restore( );
-                }
-            }
-        }
-
-        
-        draw_title(insertcontext, "Knights Move", 350 , 390);
-        draw_grid( insertcontext, grid_x_space, grid_y_space, 'blue', 'black' );
+        var insertcanvas = document.getElementById("Knightsgrid");
+        var insertcontext = insertcanvas.getContext("2d");
+        draw_title(insertcontext, "Knights Move", 350, 390);
+        draw_grid(insertcontext, grid_x_space, grid_y_space, 'blue', 'black');
         assign_value_to_grid(insertcontext, nodelist);
-
-        //draw the path of the knight
-        
-        //draw_line(insertcontext, 60, 60);
-        //knightsMove(moves);
+        draw_source_and_sink(insertcontext);
+        /*
+        var one = true;
+        var two = false;
+        var three = false;
+        if (one) {
+            var best = 0;
+            var count = 0;
+            for (var i = 0; i < 8; ++i) {
+                reset();
+                solvePath();
+                if (flowIs() > best) {
+                    best = flowIs();
+                    count = i;
+                }
+                arrayRotateOne();
+            }
+            while (count) {
+                arrayRotateOne();
+                --count;
+            }
+            reset();
+            solvePath();
+            flowIs();
+            printSolution(insertcontext);
+        }
+        if (two) {
+            var count = 500;
+            while (count) {
+                reset();
+                solvePath();
+                if (flowIs() > 1) {
+                    count = 1;
+                    printSolution(insertcontext);
+                }
+                arrayRotateThree();
+                --count;
+            }
+            printSolution(insertcontext);
+        }
+        if (three) {
+            var count = 500;
+            while (count) {
+                reset();
+                solvePath();
+                if (flowIs() > 1) {
+                    count = 1;
+                    printSolution(insertcontext);
+                }
+                arrayRotateFive();
+                --count;
+            }
+            printSolution(insertcontext);
+        }
+        */
+        var v1 = 1; //Natalie
+        var v2 = 0; //Ken
+        if (v1) {
+            //prep();
+            //path();
+            var hello = TOTAL_MAX_FLOW;
+            console.log(hello);
+            printGraph(insertcontext);
+            showVertices();
+        }
+        if (v2) {
+            PathFinder();
+            printGraph(insertcontext)
+        }
     </script>
+</body>
 </html>
-
-
