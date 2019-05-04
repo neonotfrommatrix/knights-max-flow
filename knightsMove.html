@@ -117,20 +117,56 @@
             context.fillText( "Edges Used: " + String(edges.length), 500, 50 );
             context.restore( );
         }
-        
-        draw_grid( insertcontext, grid_x_space, grid_y_space, 'blue', 'black' );
-        draw_title(insertcontext, "MAX FLOW: " + String(TOTAL_MAX_FLOW), 50 , 50);
-        draw_labels(insertcontext);
-        //assign_value_to_grid(insertcontext, nodelist);
-
-        //draw the path of the knight
-        for(var edge = 0; edge < edges.length; edge++)
+        function draw_cell_flow(context, cflow, x, y)
         {
-            var origin = edges[edge][OG_VER];
-            var destination = edges[edge][DT_VER];
-            var flow = edges[edge][CURR_FLOW];
-            var max = edges[edge][MAX_FLOW];
-            draw_line(insertcontext, origin[X_CORD]*grid_x_space, origin[Y_CORD]*grid_y_space, destination[X_CORD]*grid_x_space, destination[Y_CORD]*grid_y_space, flow, max);
+            context.save( );
+            context.fillStyle = 'black';
+            context.font = "10px Arial";
+            var x_offset = 5;
+            var y_offset = 75;
+            context.fillText( cflow, x+x_offset, y+y_offset );
+            context.restore( );
+        }
+        function update_display()
+            {
+                insertcontext.clearRect(0, 0, 850, 850);
+                draw_grid( insertcontext, grid_x_space, grid_y_space, 'blue', 'black' );
+                for(var x = 0; x < grid_x; x++)
+                {
+                    for(var y = 0; y < grid_y; y++)
+                    {
+                        draw_cell_flow(insertcontext, knightsBoard[x][y], x*grid_x_space, y*grid_y_space);
+                    }
+                }
+                TOTAL_MAX_FLOW = Math.max(TOTAL_MAX_FLOW, Ford_Fulkerson(0,6));
+                draw_title(insertcontext, "MAX FLOW: " + String(TOTAL_MAX_FLOW), 50 , 50);
+                draw_labels(insertcontext);
+                draw_lines();
+                add_edge_pair();
+                // setTimeout(update_display, 1000000 );
+            }
+        // for(var i = 0; i < 20; i++)
+        // {
+        //     update_display();
+        // }
+        (function myLoop (i) {          
+            setTimeout(function () {   
+                update_display();      
+                if (--i) myLoop(i);      //  decrement i and call myLoop again if i > 0
+            }, 20)
+        })(30);  
+        //draw the path of the knight
+        function draw_lines()
+        {
+
+            for(var edge = 0; edge < edges.length; edge++)
+            {
+                var origin = edges[edge][OG_VER];
+                var destination = edges[edge][DT_VER];
+                var flow = edges[edge][CURR_FLOW];
+                var max = edges[edge][MAX_FLOW];
+                draw_line(insertcontext, origin[X_CORD]*grid_x_space, origin[Y_CORD]*grid_y_space, destination[X_CORD]*grid_x_space, destination[Y_CORD]*grid_y_space, flow, max);
+            }
         }
         //knightsMove(moves);
     </script>
