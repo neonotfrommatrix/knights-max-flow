@@ -7,8 +7,8 @@
 <body>
     <h1>Sink the Knight</h1>
     <canvas id="Knightsgrid" width="850" height="850"></canvas>
+    <script src="./Grid.js"></script>
     <script src="./move.js"></script>
-    <script src="./move2.js"></script>
     <script>
         function draw_title(context, title, x, y) {
             context.save();
@@ -23,74 +23,12 @@
         draw_grid(insertcontext, grid_x_space, grid_y_space, 'blue', 'black');
         assign_value_to_grid(insertcontext, nodelist);
         draw_source_and_sink(insertcontext);
-        /*
-        var one = true;
-        var two = false;
-        var three = false;
-        if (one) {
-            var best = 0;
-            var count = 0;
-            for (var i = 0; i < 8; ++i) {
-                reset();
-                solvePath();
-                if (flowIs() > best) {
-                    best = flowIs();
-                    count = i;
-                }
-                arrayRotateOne();
-            }
-            while (count) {
-                arrayRotateOne();
-                --count;
-            }
-            reset();
-            solvePath();
-            flowIs();
-            printSolution(insertcontext);
-        }
-        if (two) {
-            var count = 500;
-            while (count) {
-                reset();
-                solvePath();
-                if (flowIs() > 1) {
-                    count = 1;
-                    printSolution(insertcontext);
-                }
-                arrayRotateThree();
-                --count;
-            }
-            printSolution(insertcontext);
-        }
-        if (three) {
-            var count = 500;
-            while (count) {
-                reset();
-                solvePath();
-                if (flowIs() > 1) {
-                    count = 1;
-                    printSolution(insertcontext);
-                }
-                arrayRotateFive();
-                --count;
-            }
-            printSolution(insertcontext);
-        }
-        */
-        var v1 = 1; //Natalie
-        var v2 = 0; //Ken
-        if (v1) {
-            //prep();
-            //path();
-            var hello = TOTAL_MAX_FLOW;
-            console.log(hello);
-            printGraph(insertcontext);
-            showVertices();
-        }
-        if (v2) {
-            PathFinder();
-            printGraph(insertcontext)
-        }
+        draw_numbers(insertcontext);
+        
+        Path();
+        printGraph(insertcontext);
+        console.log("optimized");
+        flowIs();
     </script>
 </body>
 </html>
