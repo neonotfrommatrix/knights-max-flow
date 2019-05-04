@@ -1,6 +1,11 @@
 var insertcanvas = document.getElementById( "Knightsgrid" );
 var insertcontext = insertcanvas.getContext( "2d" );
-let knightsBoard = [
+var grid_x_space = 85; 
+var grid_y_space = 85; 
+var grid_x = 10; 
+var grid_y = 10; 
+var nodelist = [];
+var knightsBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -12,6 +17,19 @@ let knightsBoard = [
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
 ];
+for(var x = 0; x < grid_x; x++){
+    for(var y = 0; y < grid_y; y++){
+        // flow_val ensure the flow_value number is generated to equal or less
+        var flow_val = 2 * Math.floor(Math.random() * 15.99);
+        knightsBoard[x][y] = flow_val;
+        nodelist.push(
+            {x_pos : (x*grid_x_space), 
+            y_pos : (y*grid_y_space), 
+            max_value: flow_val, 
+            flow_value : 0
+            });
+    }
+}
 // Lines of code 124-132 is the Data Structure of the graph!
 var start_path = [
     //origin vertex, destination vertex,                    max flow,                      current flow
@@ -26,11 +44,6 @@ var start_path = [
 var first_path = [[1,2],[1,2], [2,-1],[1,2], [-1,2],[2,1], [2,-1]];
 var vertices = [ [1,2], [2,4], [4,3], [5,5], [4,7], [6,8], [8,7] ];
 var edges = start_path;
-var grid_x_space = 85; 
-var grid_y_space = 85; 
-var grid_x = 10; 
-var grid_y = 10; 
-var nodelist = [];
 
 
 const DIRECTIONS = [
@@ -55,19 +68,6 @@ const Y_CORD = 1;
 var total_edge_pile = Math.floor(Math.random() * 15.99) + 15;
 var edge_pile = total_edge_pile - 6;
 
-for(var x = 0; x < grid_x; x++){
-    for(var y = 0; y < grid_y; y++){
-        // flow_val ensure the flow_value number is generated to equal or less
-        var flow_val = 2 * Math.floor(Math.random() * 15.99);
-        knightsBoard[x][y] = flow_val;
-        nodelist.push(
-            {x_pos : (x*grid_x_space), 
-            y_pos : (y*grid_y_space), 
-            max_value: flow_val, 
-            flow_value : 0
-            });
-    }
-}
 
 while(edge_pile > 1)
 {
@@ -78,11 +78,11 @@ while(edge_pile > 1)
     var first_edge_flow = 0;
     var second_edge_flow = 0;
     
-    var edge_count = edges.length;
-    for(var edge = 0; edge < edge_count; edge++)
+    var vertex_count = vertices.length;
+    for(var vertex = 0; vertex < vertex_count; vertex++)
     {
-        var this_x = edges[edge][OG_VER][X_CORD];
-        var this_y = edges[edge][OG_VER][Y_CORD];
+        var this_x = vertices[vertex][X_CORD];
+        var this_y = vertices[vertex][Y_CORD];
         
         var targets = [];
         
@@ -108,7 +108,7 @@ while(edge_pile > 1)
             }
             if(found == false)
             {
-                targets.push([target_vertex_x, target_vertex_y]);   
+                targets.push([target_vertex_x, target_vertex_y]);  
             }
         }
         //Once all targets have been found, iterate through them to find candidate edge pairs
@@ -133,9 +133,9 @@ while(edge_pile > 1)
                 
                 //The return vertex must be in the list of vertices, so continue if not
                 var found = false;
-                for(var vertix = 0; vertix < vertices.length; vertix++)
+                for(var v = 0; v < vertices.length; v++)
                 {
-                    if(target_x == vertices[vertix][X_CORD] && target_y == vertices[vertix][Y_CORD])
+                    if(return_vertex_x == vertices[v][X_CORD] && return_vertex_y == vertices[v][Y_CORD])
                     {
                         found = true;
                         break;
@@ -146,7 +146,6 @@ while(edge_pile > 1)
                     var target_flow = ((knightsBoard[this_x][this_y] + knightsBoard[target_x][target_y]) / 2);
                     var return_flow = ((knightsBoard[target_x][target_y] + knightsBoard[return_vertex_x][return_vertex_y]) / 2);
                     var max_flow = Math.min(target_flow, return_flow);
-                    
                     if(max_flow > current_highest)
                     {
                         current_highest = max_flow;
@@ -169,11 +168,11 @@ while(edge_pile > 1)
         var right_edge = [   [highest_target[X_CORD],highest_target[Y_CORD]], [highest_return[X_CORD],highest_return[Y_CORD]], second_edge_flow, 0 ];
         edges.push(left_edge);
         edges.push(right_edge);
+        vertices.push([highest_target[X_CORD],highest_target[Y_CORD]]);
     }
     
     edge_pile -= 2;
 }
-
 // ================ Breadth First Search ===============================
 
 //parents will be a list of vertex indexes that hold the coordinates of the parent node
@@ -194,28 +193,29 @@ function BFS(sourceVertex, sinkVertex)
     //Add first element to queue
     queue.push(sourceVertex);
     visited[sourceVertex] = true;
-    
     //BFS Loop
     while(queue.length > 0)
     {
         var front = queue[0];
         queue.shift();
-        
         for(var vertex = 0; vertex < vertices.length; vertex++)
         {
            //Only consider vertices that have not been visited
            if(visited[vertex] == true)
+           {
                continue;
+           }
+           var origin_vertex = vertices[front];
            var this_vertex = vertices[vertex];
            //Find all edges that have this_vertex as its origin vertex
             for(var edge = 0; edge < edges.length; edge++)
-            {
+            {                
                 //This if checks if a path exists from the front element of the queue to the current vertex in question
-                if(edges[edge][OG_VER][X_CORD] == front[X_CORD] &&
-                   edges[edge][OG_VER][Y_CORD] == front[Y_CORD] &&
-                   edges[edge][DT_VERT][X_CORD] == this_vertex[X_CORD] &&
-                   edges[edge][DT_VERT][Y_CORD] == this_vertex[Y_CORD] &&
-                   edges[edge][MAX_FLOW] - edges[edge][CURR_FLOW] > 0)
+                if(edges[edge][OG_VER][X_CORD] == origin_vertex[X_CORD] 
+                && edges[edge][OG_VER][Y_CORD] == origin_vertex[Y_CORD]
+                && edges[edge][DT_VER][X_CORD] == this_vertex[X_CORD] 
+                && edges[edge][DT_VER][Y_CORD] == this_vertex[Y_CORD] 
+                && edges[edge][MAX_FLOW] - edges[edge][CURR_FLOW] > 0)
                 {
                     queue.push(vertex);
                     parents[vertex] = front;
@@ -224,7 +224,11 @@ function BFS(sourceVertex, sinkVertex)
             }
         }
     }
-    return (visited[sinkVertex] == true);
+    if(visited[sinkVertex] == true)
+    {
+        return true;
+    }
+    return false;
 }
 
 // ==================== FORD_FULKERSON Algorithm ==========================
@@ -244,13 +248,15 @@ function Ford_Fulkerson(sourceVertex, sinkVertex)
         {
             //Origin of the edge in question
             u = parents[v];
+            var origin = vertices[u];
+            var destination = vertices[v];
             //find the edge that corresponds to the current edge
             for(var edge = 0; edge < edges.length; edge++)
             {
-                if(edges[edge][OG_VER][X_CORD] == vertices[u][X_CORD] &&
-                    edges[edge][OG_VER][Y_CORD] == vertices[u][Y_CORD] &&
-                    edges[edge][DT_VER][X_CORD] == vertices[v][X_CORD] &&
-                    edges[edge][DT_VER][Y_CORD] == vertices[v][X_CORD])
+                if(edges[edge][OG_VER][X_CORD] == origin[X_CORD] &&
+                    edges[edge][OG_VER][Y_CORD] == origin[Y_CORD] &&
+                    edges[edge][DT_VER][X_CORD] == destination[X_CORD] &&
+                    edges[edge][DT_VER][Y_CORD] == destination[Y_CORD])
                 {
                     //Keep track of the lowest possible flow through the path
                     path_flow = Math.min(path_flow, edges[edge][MAX_FLOW] - edges[edge][CURR_FLOW]);
@@ -268,7 +274,7 @@ function Ford_Fulkerson(sourceVertex, sinkVertex)
                 if(edges[edge][OG_VER][X_CORD] == vertices[u][X_CORD] &&
                     edges[edge][OG_VER][Y_CORD] == vertices[u][Y_CORD] &&
                     edges[edge][DT_VER][X_CORD] == vertices[v][X_CORD] &&
-                    edges[edge][DT_VER][Y_CORD] == vertices[v][X_CORD])
+                    edges[edge][DT_VER][Y_CORD] == vertices[v][Y_CORD])
                 {
                     //Once we've found it, we increase its flow
                     edges[edge][CURR_FLOW] += path_flow;
