@@ -2,7 +2,7 @@
     <title>Knights Move</title>
     <link rel="stylesheet" href="../assets/styles.css">
     </head>
-    <body><h1>Sink the Knight</h1>
+    <body><h1>Knight Max Flow</h1>
         <canvas id="Knightsgrid" width="850" height="850"></canvas>
     </body>
     <script src="./assets/move.js"></script>
@@ -10,12 +10,19 @@
         
         function draw_title( context, title, x, y ){
             context.save( );
-            context.fillStyle = 'darkgrey';
-            context.font = "30px Arial";
+            context.fillStyle = 'black';
+            context.font = "50px Arial";
             context.fillText( title, x, y );
             context.restore( );
         }
-
+        function draw_flow(context, flow, max, x, y)
+        {
+            context.save( );
+            context.fillStyle = 'black';
+            context.font = "12px Arial";
+            context.fillText( String(flow) + "/" + String(max), x, y);
+            context.restore( );
+        }
         function draw_grid( rctx, rminor, rmajor, rstroke, rfill  )
         {
             rctx.save( );
@@ -52,20 +59,28 @@
         }
 
         //====================================================== draw box
-        function draw_line( lctx, x_pos, y_pos ) //, stroke, fill )
+        function draw_line( lctx, org_x, org_y, des_x, des_y, flow, max) //, stroke, fill )
         {
+            var offset = 85/2;
             stroke = 'black';
+            if(flow == max)
+                stroke = 'green';
+            else if(flow > 0)
+                stroke = 'yellow';
             fill = 'black';
             lctx.save();
             lctx.strokeStyle = stroke;
             lctx.fillStyle = fill;
             lctx.lineWidth = 2;
             lctx.beginPath();
-            lctx.moveTo(0, 0);
-            lctx.lineTo(x_pos, y_pos);
+            lctx.moveTo(org_x+offset, org_y+offset);
+            lctx.lineTo(des_x+offset, des_y+offset);
             lctx.stroke();
             lctx.fill();
             lctx.restore( );
+            var half_x = (org_x + des_x) /2 + offset;
+            var half_y = (org_y + des_y) /2 + offset;
+            draw_flow(lctx, flow, max, half_x, half_y);
         }
 
         //====================================================== draw box
@@ -91,15 +106,32 @@
                 }
             }
         }
-
+        function draw_labels(context)
+        {
+            
+            context.save( );
+            context.fillStyle = 'black';
+            context.font = "25px Arial";
+            context.fillText( "Source", 90, 200 );
+            context.fillText( "Sink", 685, 625 );
+            context.fillText( "Edges Used: " + String(edges.length), 500, 50 );
+            context.restore( );
+        }
         
-        draw_title(insertcontext, "Knights Move", 350 , 390);
         draw_grid( insertcontext, grid_x_space, grid_y_space, 'blue', 'black' );
-        assign_value_to_grid(insertcontext, nodelist);
+        draw_title(insertcontext, "MAX FLOW: " + String(TOTAL_MAX_FLOW), 50 , 50);
+        draw_labels(insertcontext);
+        //assign_value_to_grid(insertcontext, nodelist);
 
         //draw the path of the knight
-        
-        //draw_line(insertcontext, 60, 60);
+        for(var edge = 0; edge < edges.length; edge++)
+        {
+            var origin = edges[edge][OG_VER];
+            var destination = edges[edge][DT_VER];
+            var flow = edges[edge][CURR_FLOW];
+            var max = edges[edge][MAX_FLOW];
+            draw_line(insertcontext, origin[X_CORD]*grid_x_space, origin[Y_CORD]*grid_y_space, destination[X_CORD]*grid_x_space, destination[Y_CORD]*grid_y_space, flow, max);
+        }
         //knightsMove(moves);
     </script>
 </html>
