@@ -11,7 +11,11 @@ Team Name: TNK; Tim Parks, Natalie Ottolia, Ken Kumagai
 
 Contents:
 
-assets folder
+assets folder contaning: style.cc move.js
+
+style.css
+
+knights.html
 
 README.txt
 
