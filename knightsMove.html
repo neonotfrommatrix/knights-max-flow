@@ -115,6 +115,7 @@
             context.fillText( "Source", 90, 200 );
             context.fillText( "Sink", 685, 625 );
             context.fillText( "Edges Used: " + String(edges.length), 500, 50 );
+            context.fillText( "Edges Unplaced: " + String(total_edge_pile - edges.length), 500, 100 );
             context.restore( );
         }
         function draw_cell_flow(context, cflow, x, y)
@@ -138,24 +139,18 @@
                         draw_cell_flow(insertcontext, knightsBoard[x][y], x*grid_x_space, y*grid_y_space);
                     }
                 }
-                TOTAL_MAX_FLOW = Math.max(TOTAL_MAX_FLOW, Ford_Fulkerson(0,6));
+                TOTAL_MAX_FLOW = Math.max(TOTAL_MAX_FLOW, Ford_Fulkerson(source_vertex,sink_vertex));
                 draw_title(insertcontext, "MAX FLOW: " + String(TOTAL_MAX_FLOW), 50 , 50);
                 draw_labels(insertcontext);
                 draw_lines();
                 add_edge_pair();
-                // setTimeout(update_display, 1000000 );
             }
-        // for(var i = 0; i < 20; i++)
-        // {
-        //     update_display();
-        // }
         (function myLoop (i) {          
             setTimeout(function () {   
-                update_display();      
+                update_display(); ;     
                 if (--i) myLoop(i);      //  decrement i and call myLoop again if i > 0
-            }, 20)
+            }, 1000)
         })(30);  
-        //draw the path of the knight
         function draw_lines()
         {
 
@@ -168,7 +163,6 @@
                 draw_line(insertcontext, origin[X_CORD]*grid_x_space, origin[Y_CORD]*grid_y_space, destination[X_CORD]*grid_x_space, destination[Y_CORD]*grid_y_space, flow, max);
             }
         }
-        //knightsMove(moves);
     </script>
 </html>
 
