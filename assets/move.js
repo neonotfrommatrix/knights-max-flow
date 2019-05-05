@@ -1,5 +1,10 @@
 var insertcanvas = document.getElementById( "Knightsgrid" );
 var insertcontext = insertcanvas.getContext( "2d" );
+var source_vertex = 0;
+var sink_vertex = 6;
+var source_edges = 1;
+var sink_edges = 1;
+var h_truths = 0;
 var grid_x_space = 85; 
 var grid_y_space = 85; 
 var grid_x = 10; 
@@ -142,7 +147,7 @@ function add_edge_pair(){
                     }
                     if(found == true)
                     {
-                        var heuristic = 1;
+                        var heuristic = 0;
                         var target_flow = ((knightsBoard[this_x][this_y] + knightsBoard[target_x][target_y]) / 2);
                         var return_flow = ((knightsBoard[target_x][target_y] + knightsBoard[return_vertex_x][return_vertex_y]) / 2);
                         var max_flow = Math.min(target_flow, return_flow);
@@ -151,16 +156,37 @@ function add_edge_pair(){
                         edges.push(left_edge);
                         edges.push(right_edge);
                         vertices.push([highest_target[X_CORD],highest_target[Y_CORD]]);
-                        var increased_flow = Ford_Fulkerson(0,6);
+                        var increased_flow = Ford_Fulkerson(source_vertex,sink_vertex);
+                        
+                        //Reset flows back to 0
+                        // if(increased_flow != 0)
+                        for(var edge = 0; edge < edges.length; edge++)
+                        {
+                            edges[edge][CURR_FLOW] = 0;
+                        }
+
                         edges.pop();
                         edges.pop();
                         vertices.pop();
-                        if(highest_return[X_CORD] == 8 && highest_return[Y_CORD] == 7)
-                            heuristic++;
-                        if(start[X_CORD] == 1 && start[Y_CORD] == 2)
-                            heuristic++;
+                        if((highest_return[X_CORD] == 8 && highest_return[Y_CORD] == 7) || (start[X_CORD] == 8 && start[Y_CORD] == 7))
+                        {
+                            if(source_edges >= sink_edges)
+                                heuristic = 100;
+                            else
+                                heuristic++;
+                            h_truths+=heuristic;
+                        }
+                        if((start[X_CORD] == 1 && start[Y_CORD] == 2) || (highest_return[X_CORD] == 1 && highest_return[Y_CORD] == 2))
+                        {
+                            h_truths++;
+                            if(source_edges <= sink_edges)
+                                heuristic = 100;
+                            else
+                                heuristic++;
+                            h_truths+=heuristic;
+                        }
                         
-                        var total_score = (max_flow * heuristic) + (increased_flow * 10);
+                        var total_score = (max_flow + heuristic) + (increased_flow * 100);
                         if( total_score > current_highest)
                         {
                             current_highest = total_score;
@@ -187,14 +213,60 @@ function add_edge_pair(){
         }
         
         edge_pile -= 2;
-        //Reset flows back to 0
-        for(var edge = 0; edge < edges.length; edge++)
-        {
-            edges[edge][CURR_FLOW] = 0;
-        }
     }
 }
-
+var new_edges = [];
+var new_vertices = [];
+var clean_vertices = [];
+function clean_useless_edges()
+{
+    new_edges = [];
+    new_vertices = [];
+    clean_vertices = [];
+    for(var edge = 0; edge < edges.length; edge++)
+    {
+        h_truths += 100000;
+        if(edges[edge][CURR_FLOW] > 0)
+        {
+            new_edges.push(edges[edge]);
+            new_vertices.push()
+        }
+    }
+    for(var edge = 0; edge < new_edges.length; edge++)
+    {
+        new_vertices.push([ new_edges[edge][OG_VER][X_CORD], new_edges[edge][OG_VER][Y_CORD] ]);
+        new_vertices.push([ new_edges[edge][DT_VER][X_CORD], new_edges[edge][DT_VER][Y_CORD] ]);
+    }
+    for(var outer = 0; outer < new_vertices.length; outer++)
+    {
+        var add_vertex = true;
+        for(var inner = 0; inner < new_vertices.length; inner++)
+        {
+            if(outer == inner)
+                continue;
+            if(new_vertices[outer][X_CORD] == new_vertices[inner][X_CORD] && new_vertices[outer][Y_CORD] == new_vertices[inner][Y_CORD])
+            {
+                add_vertex = false;
+                break;
+            }
+        }
+        if(add_vertex == true)
+        {
+            clean_vertices.push(new_vertices[outer]);
+        }
+    }
+    vertices = clean_vertices;
+    edges = new_edges;
+    for(var vertex = 0; vertex < vertices.length; vertex++)
+    {
+        if(vertices[vertex][X_CORD] == 1 && vertices[vertex][Y_CORD] == 2)
+            source_vertex = vertex;
+        if(vertices[vertex][X_CORD] == 8 && vertices[vertex][Y_CORD] == 7)
+            sink_vertex = vertex;
+        
+    }
+    edge_pile = total_edge_pile - edges.length;
+}
 // ================ Breadth First Search ===============================
 
 //parents will be a list of vertex indexes that hold the coordinates of the parent node
@@ -243,6 +315,16 @@ function BFS(sourceVertex, sinkVertex)
                     parents[vertex] = front;
                     visited[vertex] = true;
                 }
+                if(edges[edge][DT_VER][X_CORD] == origin_vertex[X_CORD] 
+                    && edges[edge][DT_VER][Y_CORD] == origin_vertex[Y_CORD]
+                    && edges[edge][OG_VER][X_CORD] == this_vertex[X_CORD] 
+                    && edges[edge][OG_VER][Y_CORD] == this_vertex[Y_CORD] 
+                    && edges[edge][MAX_FLOW] - edges[edge][CURR_FLOW] > 0)
+                    {
+                        queue.push(vertex);
+                        parents[vertex] = front;
+                        visited[vertex] = true;
+                    }
             }
         }
     }
@@ -284,6 +366,15 @@ function Ford_Fulkerson(sourceVertex, sinkVertex)
                     path_flow = Math.min(path_flow, edges[edge][MAX_FLOW] - edges[edge][CURR_FLOW]);
                     break;
                 }
+                if(edges[edge][DT_VER][X_CORD] == origin[X_CORD] &&
+                    edges[edge][DT_VER][Y_CORD] == origin[Y_CORD] &&
+                    edges[edge][OG_VER][X_CORD] == destination[X_CORD] &&
+                    edges[edge][OG_VER][Y_CORD] == destination[Y_CORD])
+                {
+                    //Keep track of the lowest possible flow through the path
+                    path_flow = Math.min(path_flow, edges[edge][MAX_FLOW] - edges[edge][CURR_FLOW]);
+                    break;
+                }
             }
         }
         //Once more, iterate through the path and increase the flow of each edge
@@ -304,6 +395,16 @@ function Ford_Fulkerson(sourceVertex, sinkVertex)
                     // Since there will only be exactly 1, we do not need to continue searching
                     break;
                 }
+                if(edges[edge][DT_VER][X_CORD] == vertices[u][X_CORD] &&
+                    edges[edge][DT_VER][Y_CORD] == vertices[u][Y_CORD] &&
+                    edges[edge][OG_VER][X_CORD] == vertices[v][X_CORD] &&
+                    edges[edge][OG_VER][Y_CORD] == vertices[v][Y_CORD])
+                {
+                    //Once we've found it, we increase its flow
+                    edges[edge][CURR_FLOW] += path_flow;
+                    // Since there will only be exactly 1, we do not need to continue searching
+                    break;
+                }
             }                 
         }
         
@@ -314,5 +415,5 @@ function Ford_Fulkerson(sourceVertex, sinkVertex)
                
                
 // ======================= THE ONE CALL THAT MAKES THE ENTIRE ALGORITHM WORK =================
-var TOTAL_MAX_FLOW = Ford_Fulkerson(0,6);
+var TOTAL_MAX_FLOW = Ford_Fulkerson(source_vertex,sink_vertex);
 // =====================================================  draw_grid ====
